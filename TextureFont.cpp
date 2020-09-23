@@ -28,7 +28,7 @@ void TextureFont::FormatFontPages()
 	{
 		if( i->second == NULL )
 			continue;
-		int b = DeleteObject( i->second );
+		const int b = DeleteObject( i->second );
 		ASSERT( b );
 	}
 	m_Characters.clear();
@@ -40,7 +40,7 @@ void TextureFont::FormatFontPages()
 	 */
 	LOGFONT font;
 	memset( &font, 0, sizeof(font) );
-	strncpy( &font.lfFaceName[0], (const char *) m_sFamily, 31 );
+	strncpy( &font.lfFaceName[0], static_cast<const char*>(m_sFamily), 31 );
 	font.lfFaceName[31] = 0;
 	font.lfCharSet = DEFAULT_CHARSET;
 	if( m_bBold )
@@ -49,19 +49,19 @@ void TextureFont::FormatFontPages()
 		font.lfItalic = TRUE;
 
 //	(fPoints / 72.0f) * 90
-	font.lfHeight = (LONG) -m_fFontSizePixels;
+	font.lfHeight = static_cast<LONG>(-m_fFontSizePixels);
 	font.lfQuality = m_bAntiAlias? ANTIALIASED_QUALITY: NONANTIALIASED_QUALITY;
 	font.lfPitchAndFamily = DEFAULT_PITCH;
 
-	HFONT hFont = CreateFontIndirect( &font );
+	const HFONT hFont = CreateFontIndirect( &font );
 	if( hFont == NULL )
 	{
 		m_sError = "Font isn't available";
 		return;
 	}
 
-	HDC hDC = CreateCompatibleDC( NULL );
-	HGDIOBJ hOldFont = SelectObject( hDC, hFont );
+	const HDC hDC = CreateCompatibleDC( NULL );
+	const HGDIOBJ hOldFont = SelectObject( hDC, hFont );
 
 	/*
 	 * Read high-level text metrics.
@@ -78,7 +78,7 @@ void TextureFont::FormatFontPages()
 	m_BoundingRect.bottom = m_BoundingRect.right = 0;
 
 
-	int n = GetKerningPairs( hDC, 0, NULL );
+	const int n = GetKerningPairs( hDC, 0, NULL );
 	KERNINGPAIR *kp = new KERNINGPAIR[n];
 	GetKerningPairs( hDC, n, kp );
 
@@ -121,7 +121,7 @@ int uint_to_wstr( unsigned int c, wchar_t *str ) {
 		str[1] = str[2] = 0;
 		return 1;
 	} else if( c < 0x110000 ) {
-		unsigned int d = c - 0x10000;
+		const unsigned int d = c - 0x10000;
 		str[0] = ((d >> 10)) & 0x3FF | 0xD800;
 		str[1] = (d & 0x3FF) | 0xDC00;
 		str[2] = 0;
@@ -135,14 +135,14 @@ int uint_to_wstr( unsigned int c, wchar_t *str ) {
 void TextureFont::FormatCharacter( unsigned int c, HDC hDC )
 {
 	wchar_t cs[16];
-	int cl = uint_to_wstr(c, cs);
+	const int cl = uint_to_wstr(c, cs);
 	if( cl < 1 )
 		return;
 
 	if( m_Characters.find(c) != m_Characters.end() )
 		return;
 
-	SCRIPT_ITEM *items = (SCRIPT_ITEM *) alloca (sizeof (SCRIPT_ITEM) * 16 + 1);
+	SCRIPT_ITEM *items = static_cast<SCRIPT_ITEM*>(alloca(sizeof(SCRIPT_ITEM) * 16 + 1));
 	int nitems;
 	if( ScriptItemize (cs, cl, 16, NULL, NULL, items, &nitems) != S_OK )
 		return;
@@ -240,11 +240,11 @@ void TextureFont::FormatCharacter( unsigned int c, HDC hDC )
 	 * large the character will be, this is somewhat oversized. */
 	HBITMAP hBitmap;
 	{
-		HDC hTempDC = GetDC(NULL);
+		const HDC hTempDC = GetDC(NULL);
 		hBitmap = CreateCompatibleBitmap( hTempDC, abc.abcB, 128 );
 		ReleaseDC( NULL, hTempDC );
 	}
-	HGDIOBJ hOldBitmap = SelectObject( hDC, hBitmap );
+	const HGDIOBJ hOldBitmap = SelectObject( hDC, hBitmap );
 
 	SetTextColor( hDC, RGB(0xFF,0xFF,0xFF) );
 	SetBkColor( hDC, RGB(0,0,0) );
@@ -311,16 +311,16 @@ void TextureFont::FormatCharacter( unsigned int c, HDC hDC )
 
 	if( realbounds.left != realbounds.right && realbounds.top != realbounds.bottom )
 	{
-		m_BoundingRect.top = min( m_BoundingRect.top, (LONG) realbounds.top );
-		m_BoundingRect.left = min( m_BoundingRect.left, (LONG) realbounds.left );
-		m_BoundingRect.right = max( m_BoundingRect.right, (LONG) realbounds.right );
-		m_BoundingRect.bottom = max( m_BoundingRect.bottom, (LONG) realbounds.bottom );
+		m_BoundingRect.top = min( m_BoundingRect.top, static_cast<LONG>(realbounds.top) );
+		m_BoundingRect.left = min( m_BoundingRect.left, static_cast<LONG>(realbounds.left) );
+		m_BoundingRect.right = max( m_BoundingRect.right, static_cast<LONG>(realbounds.right) );
+		m_BoundingRect.bottom = max( m_BoundingRect.bottom, static_cast<LONG>(realbounds.bottom) );
 		if( m_BoundingRect.left == m_BoundingRect.right && m_BoundingRect.top == m_BoundingRect.bottom )
 			m_BoundingRect = realbounds;
 	}
 
-	m_iCharLeftOverlap = max( m_iCharLeftOverlap, -int(abc.abcA) );
-	m_iCharRightOverlap = max( m_iCharRightOverlap, int(abc.abcC) - int(abc.abcB) );
+	m_iCharLeftOverlap = max( m_iCharLeftOverlap, -static_cast<int>(abc.abcA) );
+	m_iCharRightOverlap = max( m_iCharRightOverlap, static_cast<int>(abc.abcC) - static_cast<int>(abc.abcB) );
 
 //	const SolidBrush solidBrush(Color(128, 255, 0, 255));
 //	Pen pen(&solidBrush, 1);
@@ -352,22 +352,22 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 	FontPage *pPage = m_apPages[iPage];
 	pPage->m_iFrameWidth = (m_BoundingRect.right - m_BoundingRect.left) + m_iPadding;
 	pPage->m_iFrameHeight = (m_BoundingRect.bottom - m_BoundingRect.top) + m_iPadding;
-	int iDimensionMultiple = 4;	// TODO: This only needs to be 4 for doubleres textures.  It could be 2 otherwise and use less space
-	pPage->m_iFrameWidth = (int)ceil( pPage->m_iFrameWidth /(double)iDimensionMultiple ) * iDimensionMultiple;
-	pPage->m_iFrameHeight = (int)ceil( pPage->m_iFrameHeight /(double)iDimensionMultiple ) * iDimensionMultiple;
+	const int iDimensionMultiple = 4;	// TODO: This only needs to be 4 for doubleres textures.  It could be 2 otherwise and use less space
+	pPage->m_iFrameWidth = static_cast<int>(ceil(pPage->m_iFrameWidth / static_cast<double>(iDimensionMultiple))) * iDimensionMultiple;
+	pPage->m_iFrameHeight = static_cast<int>(ceil(pPage->m_iFrameHeight / static_cast<double>(iDimensionMultiple))) * iDimensionMultiple;
 
 	pPage->m_iNumFramesX = (Desc.chars.size() == 78) ? 26 :
 	                       (Desc.chars.size() > 256) ? 32 :
 	                       (Desc.chars.size() >  64) ? 16 :
 	                       (Desc.chars.size() >  16) ?  8 :
 	                                                    4;
-	pPage->m_iNumFramesY = (int) ceil( (float) Desc.chars.size() / pPage->m_iNumFramesX );
+	pPage->m_iNumFramesY = static_cast<int>(ceil(static_cast<float>(Desc.chars.size()) / pPage->m_iNumFramesX));
 
 	pPage->Create( pPage->m_iNumFramesX*pPage->m_iFrameWidth, pPage->m_iNumFramesY*pPage->m_iFrameHeight );
-	
-	HGDIOBJ hOldBitmap = SelectObject( hDC, pPage->m_hPage );
 
-	HDC hSrcDC = CreateCompatibleDC( NULL );
+	const HGDIOBJ hOldBitmap = SelectObject( hDC, pPage->m_hPage );
+
+	const HDC hSrcDC = CreateCompatibleDC( NULL );
 
 	int iRow = 0, iCol = 0;
 	for( unsigned CurChar = 0; CurChar < Desc.chars.size(); ++CurChar )
@@ -378,24 +378,24 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 		/* The current frame is at fOffsetX/fOffsetY.  Center the character
 		 * horizontally in the frame.  We can align it however we want
 		 * vertically, as long as we align the baselines. */
-		float fOffsetX = (float) pPage->m_iFrameWidth*iCol; /* origin -> frame top-left */
+		float fOffsetX = static_cast<float>(pPage->m_iFrameWidth)*iCol; /* origin -> frame top-left */
 		fOffsetX += pPage->m_iFrameWidth/2.0f; /* frame top-left -> frame center */
 		fOffsetX -= (abc.abcA+abc.abcB+abc.abcC)/2.0f;
 		fOffsetX += abc.abcA;
 
 		/* Truncate, so we don't blit to half a pixel: */
-		fOffsetX = float(int(fOffsetX));
+		fOffsetX = static_cast<float>(static_cast<int>(fOffsetX));
 
-		float fOffsetY = (float) pPage->m_iFrameHeight*iRow;
+		float fOffsetY = static_cast<float>(pPage->m_iFrameHeight)*iRow;
 		fOffsetY += GetTopPadding();
 
 		if( m_Characters[c] != NULL )
 		{
-			HBITMAP hCharacterBitmap = m_Characters[c];
-			HGDIOBJ hOldSrcBitmap = SelectObject( hSrcDC, hCharacterBitmap );
+			const HBITMAP hCharacterBitmap = m_Characters[c];
+			const HGDIOBJ hOldSrcBitmap = SelectObject( hSrcDC, hCharacterBitmap );
 
 			const RECT &realbounds = m_RealBounds[c];
-			BitBlt( hDC, int(fOffsetX), int(fOffsetY),
+			BitBlt( hDC, static_cast<int>(fOffsetX), static_cast<int>(fOffsetY),
 				m_ABC[c].abcB, realbounds.bottom,
 				hSrcDC, 0, 0, SRCCOPY );
 
@@ -417,7 +417,7 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 /* UTF-8 encode ch and append to out. */
 void wchar_to_utf8( unsigned int ch, string &out )
 {
-	if( ch < 0x80 ) { out.append( 1, (char) ch ); return; }
+	if( ch < 0x80 ) { out.append( 1, static_cast<char>(ch) ); return; }
 
 	int cbytes = 0;
 	if( ch < 0x800 ) cbytes = 1;
@@ -427,15 +427,15 @@ void wchar_to_utf8( unsigned int ch, string &out )
 	else cbytes = 5;
 
 	{
-		int shift = cbytes*6;
+		const int shift = cbytes*6;
 		const int init_masks[] = { 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
-		out.append( 1, (char) (init_masks[cbytes-1] | (ch>>shift)) );
+		out.append( 1, static_cast<char>(init_masks[cbytes - 1] | (ch >> shift)) );
 	}
 
 	for( int i = 0; i < cbytes; ++i )
 	{
-		int shift = (cbytes-i-1)*6;
-		out.append( 1, (char) (0x80 | ((ch>>shift)&0x3F)) );
+		const int shift = (cbytes-i-1)*6;
+		out.append( 1, static_cast<char>(0x80 | ((ch >> shift) & 0x3F)) );
 	}
 }
 
@@ -446,7 +446,7 @@ static bool IsNumberChar( unsigned int c )
 	return c >= 0x0030  &&  c <= 0x0039;
 }
 
-void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension, bool bSaveMetrics, bool bSaveBitmaps, bool bExportStrokeTemplates )
+void TextureFont::Save( const CString& sBasePath, const CString& sBitmapAppendBeforeExtension, bool bSaveMetrics, bool bSaveBitmaps, bool bExportStrokeTemplates )
 {
 	if( m_sError != "" )
 		return;
@@ -484,7 +484,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 			if ( desc.name == "main" ){
 					f << "range basic-japanese=0\n";
 			} else {
-				int iWidth = (int) floor( log10f( (float) desc.chars.size() / page.m_iNumFramesX ) + 1.0f );
+				const int iWidth = static_cast<int>(floor(log10f(static_cast<float>(desc.chars.size()) / page.m_iNumFramesX) + 1.0f));
 
 				unsigned iChar = 0;
 				unsigned iLine = 0;
@@ -516,7 +516,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 				 * sum of the ABC widths. */
 				const unsigned int c = desc.chars[j];
 				ABC &abc = m_ABC[c];
-				int iCharWidth = abc.abcA + int(abc.abcB) + int(abc.abcC);
+				int iCharWidth = abc.abcA + static_cast<int>(abc.abcB) + static_cast<int>(abc.abcC);
 				viCharWidth.push_back( iCharWidth );
 
 				if( IsNumberChar( c ) )
@@ -588,7 +588,7 @@ FontPage::~FontPage()
 void FontPage::Create( unsigned width, unsigned height )
 {
 	DeleteObject( m_hPage );
-	HDC hDC = GetDC(NULL);
+	const HDC hDC = GetDC(NULL);
 	m_hPage = CreateCompatibleBitmap( hDC, width, height );
 	ReleaseDC( NULL, hDC );
 }

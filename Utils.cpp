@@ -18,8 +18,8 @@ Surface::Surface( const Surface &cpy )
 
 void BitmapToSurface( HBITMAP hBitmap, Surface *pSurf )
 {
-	HDC hDC = CreateCompatibleDC( NULL );
-	HGDIOBJ hOldBitmap = SelectObject( hDC, hBitmap );
+	const HDC hDC = CreateCompatibleDC( NULL );
+	const HGDIOBJ hOldBitmap = SelectObject( hDC, hBitmap );
 
 	BITMAPINFO bi;
 	memset( &bi, 0, sizeof(bi) );
@@ -29,7 +29,7 @@ void BitmapToSurface( HBITMAP hBitmap, Surface *pSurf )
 	pSurf->iWidth = bi.bmiHeader.biWidth;
 	pSurf->iHeight = bi.bmiHeader.biHeight;
 	pSurf->iPitch = bi.bmiHeader.biWidth * 4;
-	pSurf->pRGBA = (unsigned char *) new unsigned char[pSurf->iWidth * pSurf->iHeight * 4];
+	pSurf->pRGBA = static_cast<unsigned char*>(new unsigned char[pSurf->iWidth * pSurf->iHeight * 4]);
 
 	bi.bmiHeader.biHeight = -bi.bmiHeader.biHeight;
 	bi.bmiHeader.biPlanes = 1; 
@@ -78,7 +78,7 @@ void GetBounds( const Surface *pSurf, RECT *out )
 		const unsigned *pos = (const unsigned *) p;
 		for( int col = 0; col < pSurf->iWidth; ++col )
 		{
-			unsigned pixel = pos[col];
+			const unsigned pixel = pos[col];
 			if( (pixel & 0xFFFFFF) == 0 )
 				continue; /* black */
 
@@ -121,15 +121,15 @@ void GetBounds( const Surface *pSurf, RECT *out )
 
 static void File_png_write( png_struct *pPng, png_byte *pData, png_size_t iSize )
 {
-	FILE *f = (FILE *) pPng->io_ptr;
-	size_t iGot = fwrite( pData, (int) iSize, 1, f );
+	FILE *f = static_cast<FILE*>(pPng->io_ptr);
+	size_t iGot = fwrite( pData, static_cast<int>(iSize), 1, f );
 	if( iGot == 0 )
 		png_error( pPng, strerror(errno) );
 }
 
 static void File_png_flush( png_struct *pPng )
 {
-	FILE *f = (FILE *) pPng->io_ptr;
+	FILE *f = static_cast<FILE*>(pPng->io_ptr);
 	int iGot = fflush(f);
 	if( iGot == -1 )
 		png_error( pPng, strerror(errno) );
@@ -142,7 +142,7 @@ struct error_info
 
 static void PNG_Error( png_struct *pPng, const char *szError )
 {
-	error_info *pInfo = (error_info *) pPng->error_ptr;
+	error_info *pInfo = static_cast<error_info*>(pPng->error_ptr);
 	strncpy( pInfo->szErr, szError, 1024 );
 	pInfo->szErr[1023] = 0;
 	longjmp( pPng->jmpbuf, 1 );
@@ -195,7 +195,7 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 	png_write_info( pPng, pInfo );
 	png_set_filler( pPng, 0, PNG_FILLER_AFTER );
 
-	png_byte *pixels = (png_byte *) pSurf->pRGBA;
+	png_byte *pixels = static_cast<png_byte*>(pSurf->pRGBA);
 	for( int y = 0; y < pSurf->iHeight; y++ )
 		png_write_row( pPng, pixels + pSurf->iPitch*y );
 

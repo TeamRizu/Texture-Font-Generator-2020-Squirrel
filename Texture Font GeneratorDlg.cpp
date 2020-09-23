@@ -1782,7 +1782,7 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 	CString sOld;
 	{
 		int iOldSel = m_ShownPage.GetCurSel();
-		if( iOldSel != -1 && iOldSel < (int) g_pTextureFont->m_PagesToGenerate.size() )
+		if( iOldSel != -1 && iOldSel < static_cast<int>(g_pTextureFont->m_PagesToGenerate.size()) )
 			sOld = g_pTextureFont->m_PagesToGenerate[iOldSel].name;
 	}
 
@@ -1792,7 +1792,7 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 	g_pTextureFont->m_sFamily = sText;
 	
 	m_FontSize.GetWindowText(sText);
-	g_pTextureFont->m_fFontSizePixels = (float) atof(sText);
+	g_pTextureFont->m_fFontSizePixels = static_cast<float>(atof(sText));
 	if( bSavingDoubleRes )
 		g_pTextureFont->m_fFontSizePixels *= 2;
 	
@@ -2647,7 +2647,7 @@ void CTextureFontGeneratorDlg::UpdateFontViewAndCloseUp()
 	m_ErrorOrWarning.SetWindowText( g_pTextureFont->m_sWarnings );
 
 	const int iSelectedPage = m_ShownPage.GetCurSel();
-	ASSERT( iSelectedPage < (int) g_pTextureFont->m_apPages.size() );
+	ASSERT( iSelectedPage < static_cast<int>(g_pTextureFont->m_apPages.size()) );
 
 	g_pTextureFont->m_iCharTop = LOWORD(m_SpinTop.GetPos());
 	g_pTextureFont->m_iCharBaseline = LOWORD(m_SpinBaseline.GetPos());
@@ -2882,7 +2882,7 @@ void CTextureFontGeneratorDlg::OnFileSave()
 		CString sName = g_pTextureFont->m_sFamily;
 		sName.MakeLower();
 		_snprintf( szFile, 1023, "_%s%s %gpx", 
-			(const char *) sName, 
+			static_cast<const char*>(sName), 
 			g_pTextureFont->m_bBold ? " Bold" : "",
 			g_pTextureFont->m_fFontSizePixels );
 	}
