@@ -38,7 +38,7 @@ public:
 	vector<FontPageDescription> m_PagesToGenerate;
 	void FormatFontPage( int iPage, HDC hDC );
 	void FormatFontPages();
-	void Save( CString sPath, CString sBitmapAppendBeforeExtension, bool bSaveMetrics, bool bSaveBitmaps, bool bExportStrokeTemplates );
+	void Save( const CString& sPath, const CString& sBitmapAppendBeforeExtension, bool bSaveMetrics, bool bSaveBitmaps, bool bExportStrokeTemplates );
 
 	map<unsigned int, HBITMAP> m_Characters;
 
