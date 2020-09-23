@@ -25,7 +25,7 @@ struct FontPage
 //	int Width, Height;
 
 	int m_iFrameWidth, m_iFrameHeight;
-	int m_iNumFramesX, m_iNumFramesY;
+	int m_iNumFramesX{}, m_iNumFramesY{};
 };
 
 /* Create a bitmap font with the given parameters. */

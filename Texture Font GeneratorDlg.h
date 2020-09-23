@@ -1,7 +1,7 @@
 #pragma once
 #include <afxwin.h>
 #include <afxcmn.h>
-
+#include "resource.h"
 #include "TextureFont.h"
 
 #pragma comment(lib, "usp10.lib")
@@ -11,13 +11,13 @@ class CTextureFontGeneratorDlg : public CDialog
 	DECLARE_DYNAMIC(CTextureFontGeneratorDlg);
 
 public:
-	CTextureFontGeneratorDlg(CWnd* pParent = NULL);	// standard constructor
+	CTextureFontGeneratorDlg(CWnd* pParent = nullptr);	// standard constructor
 	virtual ~CTextureFontGeneratorDlg();
 
 	enum { IDD = IDD_TEXTUREFONTGENERATOR_DIALOG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override;	// DDX/DDV support
 
 	HICON m_hIcon;
 	CFont m_Font;
@@ -28,14 +28,14 @@ protected:
 	bool m_bUpdateFontViewAndCloseUpNeeded;
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
+	BOOL OnInitDialog() override;
 	afx_msg void OnDestroy();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg void OnClose();
-	virtual void OnOK();
-	virtual void OnCancel();
-	virtual BOOL OnMouseWheel( UINT nFlags, short zDelta, CPoint pt );
+	void OnOK() override;
+	void OnCancel() override;
+	BOOL OnMouseWheel( UINT nFlags, short zDelta, CPoint pt );
 	DECLARE_MESSAGE_MAP()
 
 	void UpdateFontViewAndCloseUp();

@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-inline float truncf( float f )	{ return float(int(f)); };
+inline float truncf( float f )	{ return static_cast<float>(static_cast<int>(f)); };
 inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
 
 inline long int lrintf( float f )
@@ -16,7 +16,7 @@ inline long int lrintf( float f )
 
 struct Surface
 {
-	Surface() { pRGBA = NULL; }
+	Surface(): iWidth(0), iHeight(0), iPitch(0) { pRGBA = nullptr; }
 	~Surface() { delete [] pRGBA; }
 	Surface( const Surface &cpy );
 	int iWidth;

@@ -4,18 +4,15 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// main symbols
-
-
 class CTextureFontGeneratorApp : public CWinApp
 {
 public:
 	CTextureFontGeneratorApp();
-	BOOL ProcessMessageFilter( int code, LPMSG lpMsg );
+	BOOL ProcessMessageFilter( int code, LPMSG lpMsg ) override;
 
 public:
-	virtual BOOL InitInstance();
-	HACCEL m_hAccelerators;
+	BOOL InitInstance() override;
+	HACCEL m_hAccelerators{};
 
 	DECLARE_MESSAGE_MAP()
 };

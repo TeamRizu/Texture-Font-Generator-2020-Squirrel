@@ -3,9 +3,10 @@
 #include "Utils.h"
 
 #include <fstream>
-#include <math.h>
+#include <cmath>
 
-TextureFont::TextureFont()
+TextureFont::TextureFont(): m_bBold(false), m_bItalic(false), m_bAntiAlias(false), m_fFontSizePixels(0), m_iPadding(0),
+                            m_BoundingRect()
 {
 	m_iCharDescent = 0;
 	m_iCharLeftOverlap = 0;
@@ -16,8 +17,7 @@ TextureFont::TextureFont()
 }
 
 TextureFont::~TextureFont()
-{
-}
+= default;
 
 void TextureFont::FormatFontPages()
 {
@@ -26,7 +26,7 @@ void TextureFont::FormatFontPages()
 	m_apPages.clear();
 	for( map<unsigned int, HBITMAP>::iterator i = m_Characters.begin(); i != m_Characters.end(); ++i )
 	{
-		if( i->second == NULL )
+		if( i->second == nullptr )
 			continue;
 		const int b = DeleteObject( i->second );
 		ASSERT( b );
@@ -54,13 +54,13 @@ void TextureFont::FormatFontPages()
 	font.lfPitchAndFamily = DEFAULT_PITCH;
 
 	const HFONT hFont = CreateFontIndirect( &font );
-	if( hFont == NULL )
+	if( hFont == nullptr )
 	{
 		m_sError = "Font isn't available";
 		return;
 	}
 
-	const HDC hDC = CreateCompatibleDC( NULL );
+	const HDC hDC = CreateCompatibleDC(nullptr );
 	const HGDIOBJ hOldFont = SelectObject( hDC, hFont );
 
 	/*
@@ -78,7 +78,7 @@ void TextureFont::FormatFontPages()
 	m_BoundingRect.bottom = m_BoundingRect.right = 0;
 
 
-	const int n = GetKerningPairs( hDC, 0, NULL );
+	const int n = GetKerningPairs( hDC, 0, nullptr );
 	KERNINGPAIR *kp = new KERNINGPAIR[n];
 	GetKerningPairs( hDC, n, kp );
 
@@ -144,12 +144,12 @@ void TextureFont::FormatCharacter( unsigned int c, HDC hDC )
 
 	SCRIPT_ITEM *items = static_cast<SCRIPT_ITEM*>(alloca(sizeof(SCRIPT_ITEM) * 16 + 1));
 	int nitems;
-	if( ScriptItemize (cs, cl, 16, NULL, NULL, items, &nitems) != S_OK )
+	if( ScriptItemize (cs, cl, 16, nullptr, nullptr, items, &nitems) != S_OK )
 		return;
 
 	int gn = 0;
 	WORD gi[16];
-	SCRIPT_CACHE sc = NULL;
+	SCRIPT_CACHE sc = nullptr;
 	WORD clusters[16];
 	SCRIPT_VISATTR va[16];
 
@@ -240,9 +240,9 @@ void TextureFont::FormatCharacter( unsigned int c, HDC hDC )
 	 * large the character will be, this is somewhat oversized. */
 	HBITMAP hBitmap;
 	{
-		const HDC hTempDC = GetDC(NULL);
+		const HDC hTempDC = GetDC(nullptr);
 		hBitmap = CreateCompatibleBitmap( hTempDC, abc.abcB, 128 );
-		ReleaseDC( NULL, hTempDC );
+		ReleaseDC(nullptr, hTempDC );
 	}
 	const HGDIOBJ hOldBitmap = SelectObject( hDC, hBitmap );
 
@@ -252,7 +252,7 @@ void TextureFont::FormatCharacter( unsigned int c, HDC hDC )
 
 	// TextOutW( hDC, -abc.abcA, 0, cs, cl );
 
-	if( ScriptTextOut(hDC, &sc, -abc.abcA, 0, 0, NULL, &(items[0].a), NULL, 0, gi, gn, adv, NULL, off) != 0 )
+	if( ScriptTextOut(hDC, &sc, -abc.abcA, 0, 0, nullptr, &(items[0].a), nullptr, 0, gi, gn, adv, nullptr, off) != 0 )
 		return;
 
 	ScriptFreeCache( &sc );
@@ -367,7 +367,7 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 
 	const HGDIOBJ hOldBitmap = SelectObject( hDC, pPage->m_hPage );
 
-	const HDC hSrcDC = CreateCompatibleDC( NULL );
+	const HDC hSrcDC = CreateCompatibleDC(nullptr );
 
 	int iRow = 0, iCol = 0;
 	for( unsigned CurChar = 0; CurChar < Desc.chars.size(); ++CurChar )
@@ -389,7 +389,7 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 		float fOffsetY = static_cast<float>(pPage->m_iFrameHeight)*iRow;
 		fOffsetY += GetTopPadding();
 
-		if( m_Characters[c] != NULL )
+		if( m_Characters[c] != nullptr )
 		{
 			const HBITMAP hCharacterBitmap = m_Characters[c];
 			const HGDIOBJ hOldSrcBitmap = SelectObject( hSrcDC, hCharacterBitmap );
@@ -575,7 +575,7 @@ void TextureFont::Save( const CString& sBasePath, const CString& sBitmapAppendBe
 
 FontPage::FontPage()
 { 
-	m_hPage = NULL;
+	m_hPage = nullptr;
 	m_iFrameWidth = 0;
 	m_iFrameHeight = 0;
 }
@@ -588,9 +588,9 @@ FontPage::~FontPage()
 void FontPage::Create( unsigned width, unsigned height )
 {
 	DeleteObject( m_hPage );
-	const HDC hDC = GetDC(NULL);
+	const HDC hDC = GetDC(nullptr);
 	m_hPage = CreateCompatibleBitmap( hDC, width, height );
-	ReleaseDC( NULL, hDC );
+	ReleaseDC(nullptr, hDC );
 }
 
 /*

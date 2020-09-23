@@ -12,19 +12,19 @@ Surface::Surface( const Surface &cpy )
 	}
 	else
 	{
-		pRGBA = NULL;
+		pRGBA = nullptr;
 	}
 }
 
 void BitmapToSurface( HBITMAP hBitmap, Surface *pSurf )
 {
-	const HDC hDC = CreateCompatibleDC( NULL );
+	const HDC hDC = CreateCompatibleDC(nullptr );
 	const HGDIOBJ hOldBitmap = SelectObject( hDC, hBitmap );
 
 	BITMAPINFO bi;
 	memset( &bi, 0, sizeof(bi) );
 	bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
-	GetDIBits( hDC, hBitmap, 0, 0, NULL, &bi, DIB_RGB_COLORS );
+	GetDIBits( hDC, hBitmap, 0, 0, nullptr, &bi, DIB_RGB_COLORS );
 
 	pSurf->iWidth = bi.bmiHeader.biWidth;
 	pSurf->iHeight = bi.bmiHeader.biHeight;
@@ -52,10 +52,10 @@ void BitmapToSurface( HBITMAP hBitmap, Surface *pSurf )
 
 void GrayScaleToAlpha( Surface *pSurf )//void *pImg, int iWidth, int iHeight, int iPitch )
 {
-	char *p = (char *) pSurf->pRGBA;
+	char *p = reinterpret_cast<char*>(pSurf->pRGBA);
 	for( int iY = 0; iY < pSurf->iHeight; ++iY )
 	{
-		unsigned *pos = (unsigned *) p;
+		auto *const pos = reinterpret_cast<unsigned*>(p);
 		for( int iX = 0; iX < pSurf->iWidth; ++iX )
 		{
 			unsigned pixel = pos[iX];
@@ -72,10 +72,10 @@ void GetBounds( const Surface *pSurf, RECT *out )
 	out->left = out->right = out->top = out->bottom = 0;
 
 	int FirstCol = 9999, LastCol = 0, FirstRow = 9999, LastRow = 0;
-	const char *p = (const char *) pSurf->pRGBA;
+	const char *p = reinterpret_cast<const char*>(pSurf->pRGBA);
 	for( int row = 0; row < pSurf->iHeight; ++row )
 	{
-		const unsigned *pos = (const unsigned *) p;
+		const auto *pos = reinterpret_cast<const unsigned*>(p);
 		for( int col = 0; col < pSurf->iWidth; ++col )
 		{
 			const unsigned pixel = pos[col];
@@ -99,30 +99,18 @@ void GetBounds( const Surface *pSurf, RECT *out )
 	}
 }
 
-
-
-
-
-
-
-
-
-
-#pragma include_alias( "zlib/zlib.h", "../zlib/zlib.h" )
-#include "../libpng/include/png.h"
+#include "zlib/zlib.h"
+#include "libpng/include/png.h"
 #if defined(_MSC_VER)
-#  if defined(_XBOX)
-#    pragma comment(lib, "../libpng/lib/xboxlibpng.lib")
-#  else
-#    pragma comment(lib, "../libpng/lib/libpng.lib")
-#  endif
+#pragma comment(lib, "../libpng/lib/libpng.lib")
+
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #endif
 
 static void File_png_write( png_struct *pPng, png_byte *pData, png_size_t iSize )
 {
 	FILE *f = static_cast<FILE*>(pPng->io_ptr);
-	size_t iGot = fwrite( pData, static_cast<int>(iSize), 1, f );
+	const size_t iGot = fwrite( pData, static_cast<int>(iSize), 1, f );
 	if( iGot == 0 )
 		png_error( pPng, strerror(errno) );
 }
@@ -130,7 +118,7 @@ static void File_png_write( png_struct *pPng, png_byte *pData, png_size_t iSize 
 static void File_png_flush( png_struct *pPng )
 {
 	FILE *f = static_cast<FILE*>(pPng->io_ptr);
-	int iGot = fflush(f);
+	const int iGot = fflush(f);
 	if( iGot == -1 )
 		png_error( pPng, strerror(errno) );
 }
@@ -142,7 +130,7 @@ struct error_info
 
 static void PNG_Error( png_struct *pPng, const char *szError )
 {
-	error_info *pInfo = static_cast<error_info*>(pPng->error_ptr);
+	auto *pInfo = static_cast<error_info*>(pPng->error_ptr);
 	strncpy( pInfo->szErr, szError, 1024 );
 	pInfo->szErr[1023] = 0;
 	longjmp( pPng->jmpbuf, 1 );
@@ -162,20 +150,20 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 			Swap32BE( 0x0000FF00 ),
 			Swap32BE( 0x000000FF ) );
 */
-	error_info error;
+	error_info error{};
 	error.szErr = szErrorbuf;
 
 	png_struct *pPng = png_create_write_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
-	if( pPng == NULL )
+	if( pPng == nullptr )
 	{
 		sprintf( szErrorbuf, "creating png_create_write_struct failed");
 		return false;
 	}
 
 	png_info *pInfo = png_create_info_struct(pPng);
-	if( pInfo == NULL )
+	if( pInfo == nullptr )
 	{
-		png_destroy_read_struct( &pPng, NULL, NULL );
+		png_destroy_read_struct( &pPng, nullptr, nullptr );
 		sprintf( szErrorbuf, "creating png_create_info_struct failed");
 		return false;
 	}
@@ -195,7 +183,7 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 	png_write_info( pPng, pInfo );
 	png_set_filler( pPng, 0, PNG_FILLER_AFTER );
 
-	png_byte *pixels = static_cast<png_byte*>(pSurf->pRGBA);
+	const auto pixels = static_cast<png_byte*>(pSurf->pRGBA);
 	for( int y = 0; y < pSurf->iHeight; y++ )
 		png_write_row( pPng, pixels + pSurf->iPitch*y );
 

@@ -1,27 +1,25 @@
 #include "stdafx.h"
-#include "Texture Font Generator.h"
 #include "Texture Font GeneratorDlg.h"
+#include "Texture Font Generator.h"
 #include "TextureFont.h"
-#include "Utils.h"
-
-#include <vector>
 #include <fstream>
 #include <set>
+#include <vector>
 using namespace std;
 
-#include <math.h>
-
-static TextureFont *g_pTextureFont = NULL;
+static TextureFont *g_pTextureFont = nullptr;
 
 
 IMPLEMENT_DYNAMIC(CTextureFontGeneratorDlg, CDialog);
-CTextureFontGeneratorDlg::CTextureFontGeneratorDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CTextureFontGeneratorDlg::IDD, pParent)
+CTextureFontGeneratorDlg::CTextureFontGeneratorDlg(CWnd* pParent)
+	: CDialog(IDD, pParent), m_bUpdateFontNeeded(false),
+	  m_bUpdateFontViewAndCloseUpNeeded(false)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	g_pTextureFont = new TextureFont;
 }
+
 CTextureFontGeneratorDlg::~CTextureFontGeneratorDlg()
 {
 	delete g_pTextureFont;
@@ -1777,7 +1775,7 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 {
 	m_bUpdateFontNeeded = false;
 
-	m_FontView.SetBitmap( NULL );
+	m_FontView.SetBitmap(nullptr );
 
 	CString sOld;
 	{
@@ -2503,40 +2501,40 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 
 void CTextureFontGeneratorDlg::UpdateCloseUp()
 {
-	HBITMAP hBitmap = m_CloseUp.GetBitmap();
+	const HBITMAP hBitmap = m_CloseUp.GetBitmap();
 	HBITMAP hSample;
-	m_CloseUp.SetBitmap( NULL );
+	m_CloseUp.SetBitmap(nullptr );
 	if( hBitmap )
 		DeleteObject( hBitmap );
 
 	hSample = g_pTextureFont->m_Characters[0x003042];
 
-	if( hSample == NULL )
+	if( hSample == nullptr )
 		return;
 
-	HDC hCharacterDC = CreateCompatibleDC( NULL );
-	HGDIOBJ hOldCharacterBitmap = SelectObject( hCharacterDC, hSample );
+	const HDC hCharacterDC = CreateCompatibleDC(nullptr );
+	const HGDIOBJ hOldCharacterBitmap = SelectObject( hCharacterDC, hSample );
 
 	BITMAPINFO CharacterInfo;
 	memset( &CharacterInfo, 0, sizeof(CharacterInfo) );
 	CharacterInfo.bmiHeader.biSize = sizeof(CharacterInfo.bmiHeader);
-	GetDIBits( hCharacterDC, hSample, 0, 0, NULL, &CharacterInfo, DIB_RGB_COLORS );
+	GetDIBits( hCharacterDC, hSample, 0, 0, nullptr, &CharacterInfo, DIB_RGB_COLORS );
 
-	int iWidth = CharacterInfo.bmiHeader.biWidth;
-	int iHeight = CharacterInfo.bmiHeader.biHeight;
+	const int iWidth = CharacterInfo.bmiHeader.biWidth;
+	const int iHeight = CharacterInfo.bmiHeader.biHeight;
 
 	/* Set up a bitmap to zoom the image into. */
-	int iSourceHeight = g_pTextureFont->m_BoundingRect.bottom;
+	const int iSourceHeight = g_pTextureFont->m_BoundingRect.bottom;
 	const int iZoomFactor = 4;
 
 	HBITMAP hZoom;
 	{
-		HDC hTempDC = ::GetDC(NULL);
+		const HDC hTempDC = ::GetDC(nullptr);
 		hZoom = CreateCompatibleBitmap( hTempDC, iWidth * iZoomFactor, iSourceHeight * iZoomFactor );
-		::ReleaseDC( NULL, hTempDC );
+		::ReleaseDC(nullptr, hTempDC );
 	}
-	HDC hZoomDC = CreateCompatibleDC( NULL );
-	HGDIOBJ hOldZoomBitmap = SelectObject( hZoomDC, hZoom );
+	const HDC hZoomDC = CreateCompatibleDC(nullptr );
+	const HGDIOBJ hOldZoomBitmap = SelectObject( hZoomDC, hZoom );
 
 	StretchBlt(
 		hZoomDC, 0, 0,
@@ -2554,7 +2552,7 @@ void CTextureFontGeneratorDlg::UpdateCloseUp()
 	/* Align the line with the top of the unit, so, when correct, the font
 	 * "sits" on the line. */
 	int iY = iZoomFactor*g_pTextureFont->m_iCharBaseline - 1;
-	MoveToEx( hZoomDC, 0, iY, NULL );
+	MoveToEx( hZoomDC, 0, iY, nullptr );
 	LineTo( hZoomDC, iWidth * iZoomFactor, iY );
 
 	SelectObject( hZoomDC, hOldPen );
@@ -2566,7 +2564,7 @@ void CTextureFontGeneratorDlg::UpdateCloseUp()
 	/* Align the line with the bottom of the unit, so, when correct, the line
 	 * "sits" on the font. */
 	iY = iZoomFactor*g_pTextureFont->m_iCharTop - 1;
-	MoveToEx( hZoomDC, 0, iY, NULL );
+	MoveToEx( hZoomDC, 0, iY, nullptr );
 	LineTo( hZoomDC, iWidth * iZoomFactor, iY );
 
 	SelectObject( hZoomDC, hOldPen );
@@ -2603,7 +2601,7 @@ BOOL CTextureFontGeneratorDlg::OnInitDialog()
 		LOGFONT font;
 		memset( &font, 0, sizeof(font) );
 		font.lfCharSet = DEFAULT_CHARSET;
-		CPaintDC dc(this);
+		const CPaintDC dc(this);
 		set<CString> setFamilies;
 		EnumFontFamiliesEx( dc.GetSafeHdc(), &font, EnumFontFamiliesCallback, (LPARAM) &setFamilies, 0 );
 		for( set<CString>::const_iterator it = setFamilies.begin(); it != setFamilies.end(); ++it )
@@ -2628,7 +2626,7 @@ BOOL CTextureFontGeneratorDlg::OnInitDialog()
 void CTextureFontGeneratorDlg::UpdateFontViewAndCloseUp()
 {
 	m_bUpdateFontViewAndCloseUpNeeded = false;
-	m_FontView.SetBitmap( NULL );
+	m_FontView.SetBitmap(nullptr );
 
 	m_SpinTop.EnableWindow( true );
 	m_SpinBaseline.EnableWindow( true );
@@ -2655,7 +2653,7 @@ void CTextureFontGeneratorDlg::UpdateFontViewAndCloseUp()
 	// HBITMAP hBitmap = g_pTextureFont->m_apPages[0]->m_hPage;
 	ASSERT( g_pTextureFont->m_apPages[iSelectedPage] );
 	ASSERT( g_pTextureFont->m_apPages[iSelectedPage]->m_hPage );
-	HBITMAP hBitmap = g_pTextureFont->m_apPages[iSelectedPage]->m_hPage;
+	const HBITMAP hBitmap = g_pTextureFont->m_apPages[iSelectedPage]->m_hPage;
 	m_FontView.SetBitmap( hBitmap );
 	
 	UpdateCloseUp();
@@ -2684,12 +2682,12 @@ void CTextureFontGeneratorDlg::OnPaint()
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
 		// Center icon in client rectangle
-		int cxIcon = GetSystemMetrics(SM_CXICON);
-		int cyIcon = GetSystemMetrics(SM_CYICON);
+		const int cxIcon = GetSystemMetrics(SM_CXICON);
+		const int cyIcon = GetSystemMetrics(SM_CYICON);
 		CRect rect;
 		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2;
-		int y = (rect.Height() - cyIcon + 1) / 2;
+		const int x = (rect.Width() - cxIcon + 1) / 2;
+		const int y = (rect.Height() - cyIcon + 1) / 2;
 
 		// Draw the icon
 		dc.DrawIcon(x, y, m_hIcon);
@@ -2922,8 +2920,8 @@ void CTextureFontGeneratorDlg::OnFileSave()
 */
 
 	CMenu *pMenu = GetMenu();
-	bool bExportStrokeTemplates = !!( pMenu->GetMenuState(ID_OPTIONS_EXPORTSTROKETEMPLATES, 0) & MF_CHECKED );
-	bool bDoubleRes = !!( pMenu->GetMenuState(ID_OPTIONS_DOUBLERES, 0) & MF_CHECKED );
+	const bool bExportStrokeTemplates = !!( pMenu->GetMenuState(ID_OPTIONS_EXPORTSTROKETEMPLATES, 0) & MF_CHECKED );
+	const bool bDoubleRes = !!( pMenu->GetMenuState(ID_OPTIONS_DOUBLERES, 0) & MF_CHECKED );
 	if( bDoubleRes )
 	{
 		g_pTextureFont->Save( szFile, "", true, false, bExportStrokeTemplates );	// save metrics

@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -59,22 +57,13 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\Texture Font Generator.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Dialog
 //
 
 IDD_TEXTUREFONTGENERATOR_DIALOG DIALOGEX 0, 0, 371, 293
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "Texture Font Generator"
+CAPTION "Texture Font Generator 2020"
 MENU IDR_MENU
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
@@ -115,12 +104,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "FileVersion", "1.0.0.0"
+            VALUE "FileDescription", "Font Texture Generator for Stepmania 5.0/5.1/5.3"
+            VALUE "FileVersion", "1.0.5.3"
             VALUE "InternalName", "Texture Font Generator.exe"
-            VALUE "LegalCopyright", "(c) 2003-2007 Glenn F. Maynard.  All rights reserved."
+            VALUE "LegalCopyright", "(c) 2020 Squirrel & (c) 2003-2007 Glenn F. Maynard.  All rights reserved."
             VALUE "OriginalFilename", "Texture Font Generator.exe"
             VALUE "ProductName", "Texture Font Generator"
-            VALUE "ProductVersion", "1.0.0.0"
+            VALUE "ProductVersion", "1.0.5.3"
         END
     END
     BLOCK "VarFileInfo"
@@ -136,7 +126,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_TEXTUREFONTGENERATOR_DIALOG, DIALOG
     BEGIN
@@ -154,7 +144,7 @@ END
 // Menu
 //
 
-IDR_MENU MENU 
+IDR_MENU MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -172,15 +162,7 @@ BEGIN
     BEGIN
         MENUITEM "Double Resolution",           ID_OPTIONS_DOUBLERES
         MENUITEM "Export Stroke Templates",     ID_OPTIONS_EXPORTSTROKETEMPLATES
-#ifdef _TFG_JAPANESE_SUPPLEMENTAL
-        MENUITEM "Last Half",                   ID_OPTIONS_NUMBERSONLY
-#elif defined _TFG_CHINESE_ADDITION
-        MENUITEM "GBK Extension",               ID_OPTIONS_NUMBERSONLY
-#elif defined _TFG_KOREAN_ADDITION
-        MENUITEM "Last Half",                   ID_OPTIONS_NUMBERSONLY
-#else
         MENUITEM "Plane 2",                     ID_OPTIONS_NUMBERSONLY
-#endif
     END
 END
 
@@ -190,7 +172,7 @@ END
 // Accelerator
 //
 
-IDR_ACCELERATOR ACCELERATORS 
+IDR_ACCELERATOR ACCELERATORS
 BEGIN
     "I",            ID_ACCELERATOR_ITALIC,  VIRTKEY, CONTROL, NOINVERT
     "B",            ID_ACCELERATOR_BOLD,    VIRTKEY, CONTROL, NOINVERT
@@ -199,15 +181,26 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_TEXTUREFONTGENERATOR_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

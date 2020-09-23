@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Texture Font Generator.h"
 #include "Texture Font GeneratorDlg.h"
+#include "resource.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -95,8 +96,7 @@ BOOL CTextureFontGeneratorApp::InitInstance()
 	const INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{
-		// TODO: Place code here to handle when the dialog is
-		//  dismissed with OK
+		// TODO: Place code here to handle when the dialog is dismissed with OK
 	}
 	else if (nResponse == IDCANCEL)
 	{
