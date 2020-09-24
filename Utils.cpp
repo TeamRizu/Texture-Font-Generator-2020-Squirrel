@@ -99,10 +99,11 @@ void GetBounds( const Surface *pSurf, RECT *out )
 	}
 }
 
-#include "zlib/zlib.h"
+#include "libpng/include/zlib.h"
 #include "libpng/include/png.h"
+//#include <cstdio>
 #if defined(_MSC_VER)
-#pragma comment(lib, "../libpng/lib/libpng.lib")
+#pragma comment(lib, "libpng/lib/libpng.lib")
 
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #endif
@@ -140,6 +141,10 @@ static void PNG_Warning( png_struct *png, const char *warning )
 {
 }
 
+extern "C" {
+	FILE* _iob = nullptr;
+}
+
 /* Since libpng forces us to use longjmp, this function shouldn't create any C++
  * objects, and needs to watch out for memleaks. */
 bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
@@ -153,10 +158,14 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 	error_info error{};
 	error.szErr = szErrorbuf;
 
+
+
+	
 	png_struct *pPng = png_create_write_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
 	if( pPng == nullptr )
 	{
 		sprintf( szErrorbuf, "creating png_create_write_struct failed");
+		fprintf((FILE*)szErrorbuf, "Had to add this here for the linker");
 		return false;
 	}
 
@@ -164,7 +173,7 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 	if( pInfo == nullptr )
 	{
 		png_destroy_read_struct( &pPng, nullptr, nullptr );
-		sprintf( szErrorbuf, "creating png_create_info_struct failed");
+		//sprintf( szErrorbuf, "creating png_create_info_struct failed");
 		return false;
 	}
 
@@ -217,3 +226,8 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+
+int fprintf()
+{
+	return 0;
+}

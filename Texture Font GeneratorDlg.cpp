@@ -2579,8 +2579,8 @@ void CTextureFontGeneratorDlg::UpdateCloseUp()
 
 int CALLBACK CTextureFontGeneratorDlg::EnumFontFamiliesCallback( const LOGFONTA *pLogicalFontData, const TEXTMETRICA *pPhysicalFontData, DWORD FontType, LPARAM lParam )
 {
-	CTextureFontGeneratorDlg *pThis = (CTextureFontGeneratorDlg *) lParam;
-	set<CString> *pSet = (set<CString> *) lParam;
+	CTextureFontGeneratorDlg *pThis = reinterpret_cast<CTextureFontGeneratorDlg*>(lParam);
+	set<CString> *pSet = reinterpret_cast<set<CString>*>(lParam);
 	pSet->insert( pLogicalFontData->lfFaceName );
 	return 1;
 }
@@ -2603,7 +2603,7 @@ BOOL CTextureFontGeneratorDlg::OnInitDialog()
 		font.lfCharSet = DEFAULT_CHARSET;
 		const CPaintDC dc(this);
 		set<CString> setFamilies;
-		EnumFontFamiliesEx( dc.GetSafeHdc(), &font, EnumFontFamiliesCallback, (LPARAM) &setFamilies, 0 );
+		EnumFontFamiliesEx( dc.GetSafeHdc(), &font, EnumFontFamiliesCallback, reinterpret_cast<LPARAM>(&setFamilies), 0 );
 		for( set<CString>::const_iterator it = setFamilies.begin(); it != setFamilies.end(); ++it )
 			m_FamilyList.AddString( *it );
 		m_FamilyList.SetCurSel( 0 );
