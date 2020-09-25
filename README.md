@@ -1,6 +1,6 @@
 Texture-Font-Generator-2020-Squirrel
 
-This is a modernisation of the Texture Font Generator for Stepmania 5.x, with missing glyphs and archiac codepages removed.
+This is a modernisation of the Texture Font Generator for Stepmania 5.x, with incorrect glyphs and archiac codepages removed.
 
 The glyphs now follow a more UTF-8 friendly method to generate.
 
