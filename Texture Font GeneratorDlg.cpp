@@ -2031,17 +2031,19 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 
 	bool bNumbersOnly = !!( pMenu->GetMenuState(ID_OPTIONS_NUMBERSONLY, 0) & MF_CHECKED );
 
+	desc.name = "main"; // no need to gen this for everything as it's japanese!
+	for (int i = 0; map_main[i]; ++i)
+	{
+		unsigned wc = map_main[i];
+		desc.chars.push_back(wc);
+	}
+	g_pTextureFont->m_PagesToGenerate.push_back(desc);
+	
 #ifdef _TFG_JAPANESE_SUPPLEMENTAL
 	// JIS X 0212 characters not in JIS X 0208, CP932, JIS X 0213
 	if( !bNumbersOnly )
 	{
-		desc.name = "main"; // no need to gen this for everything as it's japanese!
-		for (int i = 0; map_main[i]; ++i)
-		{
-			unsigned wc = map_main[i];
-			desc.chars.push_back(wc);
-		}
-		g_pTextureFont->m_PagesToGenerate.push_back(desc);
+
 
 		desc.name = "symbol-hojo";
 		desc.chars.clear();
