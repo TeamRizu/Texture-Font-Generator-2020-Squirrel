@@ -9,7 +9,6 @@ using namespace std;
 
 static TextureFont *g_pTextureFont = nullptr;
 
-
 IMPLEMENT_DYNAMIC(CTextureFontGeneratorDlg, CDialog);
 CTextureFontGeneratorDlg::CTextureFontGeneratorDlg(CWnd* pParent)
 	: CDialog(IDD, pParent), m_bUpdateFontNeeded(false),
@@ -76,7 +75,11 @@ END_MESSAGE_MAP()
 	symbol-gbk5 -> symbol-gbk?
 */
 
-static const unsigned map_main[] = {
+static const unsigned map_null[] = {
+	0xFFFD, 0
+};
+
+static const unsigned map_basic_japanese[] = {
 	0x003000, 0x003001, 0x003002, 0x003003, 0x003004, 0x003005, 0x003006, 0x003007, 0x003008, 0x003009, 0x00300A, 0x00300B, 0x00300C, 0x00300D, 0x00300E, 0x00300F,
 	0x003010, 0x003011, 0x003012, 0x003013, 0x003014, 0x003015, 0x003016, 0x003017, 0x003018, 0x003019, 0x00301A, 0x00301B, 0x00301C, 0x00301D, 0x00301E, 0x00301F,
 	0x003020, 0x003021, 0x003022, 0x003023, 0x003024, 0x003025, 0x003026, 0x003027, 0x003028, 0x003029, 0x00302A, 0x00302B, 0x00302C, 0x00302D, 0x00302E, 0x00302F,
@@ -109,117 +112,6 @@ static const unsigned map_ank[] = {
 	0x00FF91, 0x00FF92, 0x00FF93, 0x00FF94, 0x00FF95, 0x00FF96, 0x00FF97, 0x00FF98, 0x00FF99, 0x00FF9A, 0x00FF9B, 0x00FF9C, 0x00FF9D, 0x00FF9E, 0x00FF9F,
 	0
 };
-
-/*
-// foonmix's kanji 1-9, no longer used
-static const unsigned map_kanji_1[] = {
-	0x0096E3, 0x006613, 0x005B9A, 0x005909, 0x0066F4, 0x0062BC, 0x00753B, 0x0066F2,
-	0x0073FE, 0x005728, 0x009078, 0x00629E, 0x009805, 0x0076EE, 0x00540C, 0x008A2D,
-	0x00958B, 0x009589, 0x005185, 0x0089A7, 0x008868, 0x00793A, 0x008A73, 0x007D30,
-	0x0053CA, 0x004F5C, 0x0077E2, 0x005370, 0x005834, 0x008B66, 0x00544A, 0x0053EF,
-	0x0080FD, 0x006027, 0x0051E6, 0x007406, 0x00901F, 0x006570, 0x005024, 0x008D85,
-	0x0052B9, 0x004F7F, 0x007279, 0x0056FA, 0x007701, 0x007565, 0x0051FA, 0x008A5E,
-	0x0064CD, 0x005168, 0x006F14, 0x00594F, 0x009032, 0x0070B9, 0x006A5F, 0x0079FB,
-	0x005DE6, 0x0053F3, 0x005909, 0x0066F4, 0x004EE5, 0x005916, 0x0080CC, 0x00666F,
-	0
-};
-
-static const unsigned map_kanji_2[] = {
-	0x007FA9, 0x0080CC, 0x00666F, 0x005371, 0x00967A, 0x0072B6, 0x00614B, 0x007FD2,
-	0x008B5C, 0x005224, 0x006E1B, 0x005C11, 0x007387, 0x009069, 0x005897, 0x0052A0,
-	0x007121, 0x007D42, 0x004E86, 0x0095A2, 0x004FC2, 0x0053C2, 0x008003, 0x004ED6,
-	0x008A00, 0x005909, 0x0063DB, 0x008A55, 0x004FA1, 0x006761, 0x004EF6, 0x007A81,
-	0x004E8B, 0x008FFD, 0x004E0D, 0x005207, 0x005E38, 0x009664, 0x006B21, 0x007B49,
-	0x004F4E, 0x00623B, 0x0053B3, 0x006B8B, 0x0057FA, 0x009014, 0x00975E, 0x005236,
-	0x009650, 0x00914D, 0x004FDD, 0x005B58, 0x0079D2, 0x0053CD, 0x005FDC, 0x005C02,
-	0x008AA4, 0x009632, 0x006574, 0x00592E, 0x0096A0, 0x0050D5, 0x0063F4, 0x008D77,
-	0
-};
-
-static const unsigned map_kanji_3[] = {
-	0x0076F8, 0x0064B2, 0x005C4B, 0x004F55, 0x007A74, 0x00540D, 0x004F8B, 0x005302,
-	0x005FC3, 0x0063FA, 0x009F3B, 0x005F53, 0x008179, 0x009CF4, 0x0075E2, 0x004FBF,
-	0x005C3B, 0x0062ED, 0x0092FC, 0x0096EB, 0x006697, 0x009ED2, 0x008FF7, 0x008DEF,
-	0x0063A2, 0x00691C, 0x00524D, 0x0054E1, 0x006D6E, 0x0099D0, 0x0063A5, 0x007D9A,
-	0x00985E, 0x0058EB, 0x008AF8, 0x00541B, 0x0054C1, 0x007269, 0x0056F0, 0x0058F0,
-	0x0053E3, 0x008ABF, 0x0098DF, 0x00515A, 0x007D50, 0x005A5A, 0x008EAB, 0x004E45,
-	0x0053CB, 0x0096FB, 0x008A71, 0x005EC3, 0x004F11, 0x009152, 0x0098F2, 0x005F15,
-	0x007BED, 0x005974, 0x005B66, 0x008077, 0x00624B, 0x008449, 0x005BBF, 0x0099AC,
-	0
-};
-
-static const unsigned map_kanji_4[] = {
-	0x004EAC, 0x005BBF, 0x006D6A, 0x0066AE, 0x006A2A, 0x005DE3, 0x009D28, 0x00512A,
-	0x005C45, 0x00601D, 0x00624B, 0x007DDA, 0x0056DE, 0x007D9A, 0x005206, 0x007136,
-	0x0053D6, 0x009054, 0x008074, 0x006700, 0x005B57, 0x008F9E, 0x0066F8, 0x0072EC,
-	0x005B63, 0x007BC0, 0x004FFA, 0x006B63, 0x005BFE, 0x008857, 0x00753A, 0x006E0B,
-	0x0059FF, 0x007B11, 0x0096A3, 0x0075C5, 0x009662, 0x00958B, 0x009802, 0x0079D1,
-	0x005148, 0x00771E, 0x005F13, 0x006CA2, 0x006C37, 0x00606D, 0x0056FD, 0x008033,
-	0x004ECA, 0x00901D, 0x005143, 0x004E88, 0x005831, 0x005206, 0x0079D8, 0x005BC6,
-	0x007269, 0x007F70, 0x00671B, 0x005CF0, 0x005DEB, 0x005DE5, 0x00696D, 0x00793E,
-	0
-};
-
-static const unsigned map_kanji_5[] = {
-	0x00FF5E, 0x0003C6, 0x00221E, 0x00FF1A, 0x005802, 0x0059B9, 0x00702C, 0x005DDD,
-	0x0098DB, 0x005DFB, 0x006A5F, 0x005C71, 0x00689D, 0x006D66, 0x0068EE, 0x0054E1,
-	0x00540C, 0x006E05, 0x006C34, 0x005EA7, 0x0052C9, 0x005F37, 0x0096C6, 0x005408,
-	0x006025, 0x006B62, 0x0051FA, 0x005185, 0x005247, 0x004E16, 0x00754C, 0x0079D2,
-	0x006570, 0x005FB3, 0x009999, 0x00767E, 0x005343, 0x008449, 0x007D17, 0x009759,
-	0x00661F, 0x007C73, 0x005C0B, 0x00614E, 0x00543E, 0x005CA1, 0x007AF9, 0x0068A8,
-	0x0067F4, 0x0077E2, 0x009B4D, 0x009B4E, 0x00904A, 0x006483, 0x00968A, 0x0091CC,
-	0x008CC0, 0x0073B2, 0x00798F, 0x0082B3,
-	0
-};
-
-static const unsigned map_kanji_6[] = {
-	0x005CF6, 0x00793C, 0x006238, 0x006843, 0x009EA6, 0x004EC1, 0x00667A, 0x008D64,
-	0x008ECA, 0x006B4C, 0x0077E5, 0x0083EF, 0x00738B, 0x005148, 0x00884C, 0x008005,
-	0x009858, 0x00611B, 0x005504, 0x007D50, 0x005A5A, 0x007D20, 0x0076F4, 0x00967D,
-	0x005B87, 0x005B99, 0x006D77, 0x008CCA, 0x005192, 0x00967A, 0x009580, 0x005916,
-	0x0065E9, 0x0091CD, 0x00756A, 0x00969B, 0x00901A, 0x00518D, 0x0050CF, 0x009BAE,
-	0x0091CF, 0x005FC5, 0x008981, 0x007A2E, 0x005F85, 0x005177, 0x008CEA, 0x006D88,
-	0x0053BB, 0x005BAE, 0x008A08, 0x007B97, 0x00964D, 0x008C61, 0x005FD8, 0x006F15,
-	0x006EC5, 0x00554F, 0x008239, 0x004E57, 0x0065C5, 0x0078BA, 0x00904E, 0x0058CA,
-	0
-};
-
-static const unsigned map_kanji_7[] = {
-	0x006DF1, 0x0090FD, 0x007BC9, 0x00934B, 0x00884C, 0x00811A, 0x007363, 0x00767B,
-	0x0096E8, 0x0059CB, 0x007D04, 0x00675F, 0x006240, 0x008679, 0x005F69, 0x006F84,
-	0x009803, 0x005E74, 0x005DE1, 0x004EA4, 0x005E7C, 0x004F9B, 0x005E74, 0x008A70,
-	0x008349, 0x008A93, 0x005B64, 0x008A69, 0x00610F, 0x005473, 0x006392, 0x006E9D,
-	0x00523B, 0x004ED8, 0x00826F, 0x008D70, 0x006211, 0x008B33, 0x007684, 0x00652F,
-	0x0053F0, 0x005339, 0x006771, 0x008584, 0x005473, 0x00564C, 0x00629C, 0x006C41,
-	0x005F79, 0x00718A, 0x0060DA, 0x007247, 0x006301, 0x006821, 0x0053D7, 0x009A13,
-	0x00805E, 0x007AF6, 0x004E89, 0x006FC0, 0x0070BA, 0x0061F8, 0x00683C, 0x00767D,
-	0
-};
-
-static const unsigned map_kanji_8[] = {
-	0x004F59, 0x007B54, 0x00767A, 0x005BC2, 0x005352, 0x0089AA, 0x005B5D, 0x007ACB,
-	0x006D3E, 0x005C40, 0x007E01, 0x008A6E, 0x006ED1, 0x0062DD, 0x00559C, 0x006BC0,
-	0x005E72, 0x0061F2, 0x0053F7, 0x006557, 0x00582A, 0x007D76, 0x006307, 0x004ED5,
-	0x0080C6, 0x004E9B, 0x007D30, 0x006162, 0x009996, 0x0050BE, 0x005DF1, 0x004E3B,
-	0x00632F, 0x008FD4, 0x005FAE, 0x005999, 0x0096F7, 0x005869, 0x005E7D, 0x00970A,
-	0x00697D, 0x0056E3, 0x009060, 0x006368, 0x0082E6, 0x00611F, 0x005A01, 0x006563,
-	0x008CED, 0x006469, 0x00674E, 0x00592B, 0x00821E, 0x009DFA, 0x009808, 0x0096F2,
-	0x006D41, 0x008AB0, 0x008EE2, 0x007559, 0x0099C4, 0x006E90, 0x006559, 0x00547C,
-	0
-};
-
-static const unsigned map_kanji_9[] = {
-	0x009006, 0x008DB3, 0x007DF4, 0x009055, 0x007167, 0x005E3D, 0x00534A, 0x008DDD,
-	0x0096E2, 0x005F1F, 0x008107, 0x005144, 0x005B8C, 0x0074A7, 0x006551, 0x008A98,
-	0x0062D0, 0x006280, 0x008E0F, 0x0096EA, 0x008D8A, 0x007DD1, 0x0062BC, 0x008D6B,
-	0x0067D3, 0x005FA1, 0x005ACC, 0x007CDE, 0x00533B, 0x007642, 0x0067FB, 0x009451,
-	0x008CDE, 0x007DE8, 0x00524A, 0x009818, 0x005411, 0x006BB5, 0x00968E, 0x006B8A,
-	0x00679C, 0x007D1A, 0x005411, 0x008155, 0x00900F, 0x00524D, 0x005FA9, 0x004F4D,
-	0x005531, 0x009752, 0x009854, 0x0053EB, 0x0063CF, 0x006BBF, 0x006383, 0x00622F,
-	0x006016, 0x005E95, 0x006CB3, 0x00795D, 0x005301, 0x005B9D, 0x0066A6,
-	0
-};
-*/
 
 // Symbol from foonmix
 static const unsigned map_symbol[] = {
@@ -1993,412 +1885,411 @@ static const unsigned map_numbers[] = {
 	0
 };
 /* Regenerate the font, pulling in settings from widgets. */
-void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
+void CTextureFontGeneratorDlg::UpdateFont(bool bSavingDoubleRes)
 {
 	m_bUpdateFontNeeded = false;
 
-	m_FontView.SetBitmap(nullptr );
+	m_FontView.SetBitmap(nullptr);
 
 	CString sOld;
 	{
 		int iOldSel = m_ShownPage.GetCurSel();
-		if( iOldSel != -1 && iOldSel < static_cast<int>(g_pTextureFont->m_PagesToGenerate.size()) )
+		if (iOldSel != -1 && iOldSel < static_cast<int>(g_pTextureFont->m_PagesToGenerate.size()))
 			sOld = g_pTextureFont->m_PagesToGenerate[iOldSel].name;
 	}
 
 	/* Get the selected font m_sFamily. */
 	CString sText;
-	m_FamilyList.GetWindowText( sText );
+	m_FamilyList.GetWindowText(sText);
 	g_pTextureFont->m_sFamily = sText;
-	
+
 	m_FontSize.GetWindowText(sText);
 	g_pTextureFont->m_fFontSizePixels = static_cast<float>(atof(sText));
-	if( bSavingDoubleRes )
+	if (bSavingDoubleRes)
 		g_pTextureFont->m_fFontSizePixels *= 2;
-	
+
 	m_Padding.GetWindowText(sText);
 	g_pTextureFont->m_iPadding = atoi(sText);
-	if( bSavingDoubleRes )
+	if (bSavingDoubleRes)
 		g_pTextureFont->m_iPadding *= 2;
 
-	CMenu *pMenu = GetMenu();
-	g_pTextureFont->m_bBold = !!( pMenu->GetMenuState(ID_STYLE_BOLD, 0) & MF_CHECKED );
-	g_pTextureFont->m_bItalic = !!( pMenu->GetMenuState(ID_STYLE_ITALIC, 0) & MF_CHECKED );
-	g_pTextureFont->m_bAntiAlias = !!( pMenu->GetMenuState(ID_STYLE_ANTIALIASED, 0) & MF_CHECKED );
+	CMenu* pMenu = GetMenu();
+	g_pTextureFont->m_bBold = !!(pMenu->GetMenuState(ID_STYLE_BOLD, 0) & MF_CHECKED);
+	g_pTextureFont->m_bItalic = !!(pMenu->GetMenuState(ID_STYLE_ITALIC, 0) & MF_CHECKED);
+	g_pTextureFont->m_bAntiAlias = !!(pMenu->GetMenuState(ID_STYLE_ANTIALIASED, 0) & MF_CHECKED);
 
 	g_pTextureFont->m_PagesToGenerate.clear();
 	FontPageDescription desc;
 
-	bool bNumbersOnly = !!( pMenu->GetMenuState(ID_OPTIONS_NUMBERSONLY, 0) & MF_CHECKED );
+	bool bNumbersOnly = !!(pMenu->GetMenuState(ID_OPTIONS_NUMBERSONLY, 0) & MF_CHECKED);
 
-	desc.name = "main"; // no need to gen this for everything as it's japanese!
-	for (int i = 0; map_main[i]; ++i)
+	desc.name = "null";
+	desc.chars.clear();
+	for (int i = 0; map_null[i]; ++i)
 	{
-		unsigned wc = map_main[i];
+		unsigned wc = map_null[i];
 		desc.chars.push_back(wc);
 	}
 	g_pTextureFont->m_PagesToGenerate.push_back(desc);
 	
 #ifdef _TFG_JAPANESE_SUPPLEMENTAL
 	// JIS X 0212 characters not in JIS X 0208, CP932, JIS X 0213
-	if( !bNumbersOnly )
+	if (!bNumbersOnly)
 	{
-
-
 		desc.name = "symbol-hojo";
 		desc.chars.clear();
-		for( int i = 0; map_symbol_hojo[i]; ++i )
+		for (int i = 0; map_symbol_hojo[i]; ++i)
 		{
 			unsigned wc = map_symbol_hojo[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-hojo 1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_hojo_1[i]; ++i )
+		for (int i = 0; map_kanji_hojo_1[i]; ++i)
 		{
 			unsigned wc = map_kanji_hojo_1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-hojo 2";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_hojo_2[i]; ++i )
+		for (int i = 0; map_kanji_hojo_2[i]; ++i)
 		{
 			unsigned wc = map_kanji_hojo_2[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-hojo 3";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_hojo_3[i]; ++i )
+		for (int i = 0; map_kanji_hojo_3[i]; ++i)
 		{
 			unsigned wc = map_kanji_hojo_3[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 	}
 	else
 	{
 		desc.name = "kanji-hojo 4";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_hojo_4[i]; ++i )
+		for (int i = 0; map_kanji_hojo_4[i]; ++i)
 		{
 			unsigned wc = map_kanji_hojo_4[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-hojo 5";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_hojo_5[i]; ++i )
+		for (int i = 0; map_kanji_hojo_5[i]; ++i)
 		{
 			unsigned wc = map_kanji_hojo_5[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-hojo 6";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_hojo_6[i]; ++i )
+		for (int i = 0; map_kanji_hojo_6[i]; ++i)
 		{
 			unsigned wc = map_kanji_hojo_6[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 	}
 #elif defined _TFG_CHINESE_ADDITION // _TFG_JAPANESE_SUPPLEMENTAL
 	// GBK characters not in JIS X 0208, CP932, JIS X 0213, JIS X 0212
-	if( !bNumbersOnly )
+	if (!bNumbersOnly)
 	{
 		// GB 2132
 		desc.name = "symbol-gbk1";
 		desc.chars.clear();
-		for( int i = 0; map_symbol_gbk1[i]; ++i )
+		for (int i = 0; map_symbol_gbk1[i]; ++i)
 		{
 			unsigned wc = map_symbol_gbk1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-gbk2 1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk2_1[i]; ++i )
+		for (int i = 0; map_kanji_gbk2_1[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk2_1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-gbk2 2";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk2_2[i]; ++i )
+		for (int i = 0; map_kanji_gbk2_2[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk2_2[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-gbk2 3";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk2_3[i]; ++i )
+		for (int i = 0; map_kanji_gbk2_3[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk2_3[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 	}
 	else
 	{
 		// GBK Extension and Compatible Ideograph
 		desc.name = "kanji-gbk3 1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk3_1[i]; ++i )
+		for (int i = 0; map_kanji_gbk3_1[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk3_1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-gbk3 2";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk3_2[i]; ++i )
+		for (int i = 0; map_kanji_gbk3_2[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk3_2[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-gbk3 3";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk3_3[i]; ++i )
+		for (int i = 0; map_kanji_gbk3_3[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk3_3[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-gbk4 1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk4_1[i]; ++i )
+		for (int i = 0; map_kanji_gbk4_1[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk4_1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-gbk4 2";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk4_2[i]; ++i )
+		for (int i = 0; map_kanji_gbk4_2[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk4_2[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-gbk4 3";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk4_3[i]; ++i )
+		for (int i = 0; map_kanji_gbk4_3[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk4_3[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-gbk4 4";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_gbk4_4[i]; ++i )
+		for (int i = 0; map_kanji_gbk4_4[i]; ++i)
 		{
 			unsigned wc = map_kanji_gbk4_4[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "symbol-gbk5";
 		desc.chars.clear();
-		for( int i = 0; map_symbol_gbk5[i]; ++i )
+		for (int i = 0; map_symbol_gbk5[i]; ++i)
 		{
 			unsigned wc = map_symbol_gbk5[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-// DO NOT GENERATE DUE TO STEPMANIA'S SPECIFICATION.
+		// DO NOT GENERATE DUE TO STEPMANIA'S SPECIFICATION.
 #ifdef _TFG_GENERATE_SIP
 		desc.name = "kanji-cns";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_cns[i]; ++i )
+		for (int i = 0; map_kanji_cns[i]; ++i)
 		{
 			unsigned wc = map_kanji_cns[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 #endif
 	}
 #elif defined _TFG_KOREAN_ADDITION // _TFG_CHINESE_ADDITION
 	// KS X 1001 characters not in JIS X 0208, CP932, JIS X 0213, JIS X 0212, GBK
-	if( !bNumbersOnly )
+	if (!bNumbersOnly)
 	{
 		// Hangul Jamo, Compatible Ideograph, KS X 1001 Symbol
 		desc.name = "jamo";
 		desc.chars.clear();
-		for( int i = 0; map_jamo[i]; ++i )
+		for (int i = 0; map_jamo[i]; ++i)
 		{
 			unsigned wc = map_jamo[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "jamo-ks";
 		desc.chars.clear();
-		for( int i = 0; map_jamo_ks[i]; ++i )
+		for (int i = 0; map_jamo_ks[i]; ++i)
 		{
 			unsigned wc = map_jamo_ks[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "jamo-a";
 		desc.chars.clear();
-		for( int i = 0; map_jamo_a[i]; ++i )
+		for (int i = 0; map_jamo_a[i]; ++i)
 		{
 			unsigned wc = map_jamo_a[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "jamo-b";
 		desc.chars.clear();
-		for( int i = 0; map_jamo_b[i]; ++i )
+		for (int i = 0; map_jamo_b[i]; ++i)
 		{
 			unsigned wc = map_jamo_b[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-ks";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_ks[i]; ++i )
+		for (int i = 0; map_kanji_ks[i]; ++i)
 		{
 			unsigned wc = map_kanji_ks[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "symbol-ks";
 		desc.chars.clear();
-		for( int i = 0; map_symbol_ks[i]; ++i )
+		for (int i = 0; map_symbol_ks[i]; ++i)
 		{
 			unsigned wc = map_symbol_ks[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		// Hangul Syllables, first half
 		desc.name = "hangul 1";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_1[i]; ++i )
+		for (int i = 0; map_hangul_1[i]; ++i)
 		{
 			unsigned wc = map_hangul_1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "hangul 2";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_2[i]; ++i )
+		for (int i = 0; map_hangul_2[i]; ++i)
 		{
 			unsigned wc = map_hangul_2[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "hangul 3";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_3[i]; ++i )
+		for (int i = 0; map_hangul_3[i]; ++i)
 		{
 			unsigned wc = map_hangul_3[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "hangul 4";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_4[i]; ++i )
+		for (int i = 0; map_hangul_4[i]; ++i)
 		{
 			unsigned wc = map_hangul_4[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "hangul 5";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_5[i]; ++i )
+		for (int i = 0; map_hangul_5[i]; ++i)
 		{
 			unsigned wc = map_hangul_5[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 	}
 	else
 	{
 		// Hangul Syllables, last half
 		desc.name = "hangul 6";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_6[i]; ++i )
+		for (int i = 0; map_hangul_6[i]; ++i)
 		{
 			unsigned wc = map_hangul_6[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "hangul 7";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_7[i]; ++i )
+		for (int i = 0; map_hangul_7[i]; ++i)
 		{
 			unsigned wc = map_hangul_7[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "hangul 8";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_8[i]; ++i )
+		for (int i = 0; map_hangul_8[i]; ++i)
 		{
 			unsigned wc = map_hangul_8[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "hangul 9";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_9[i]; ++i )
+		for (int i = 0; map_hangul_9[i]; ++i)
 		{
 			unsigned wc = map_hangul_9[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "hangul 10";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_10[i]; ++i )
+		for (int i = 0; map_hangul_10[i]; ++i)
 		{
 			unsigned wc = map_hangul_10[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "hangul 11";
 		desc.chars.clear();
-		for( int i = 0; map_hangul_11[i]; ++i )
+		for (int i = 0; map_hangul_11[i]; ++i)
 		{
 			unsigned wc = map_hangul_11[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 	}
 #elif defined _TFG_LEGACY_ADDITION
 	if (!bNumbersOnly)
@@ -2453,439 +2344,365 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 	}
 
 #elif defined _TFG_EURO_ADDITION
-if (!bNumbersOnly)
-{
-	desc.name = "basic-latin";
-	desc.chars.clear();
-	for (int i = 0; basic_latin[i]; ++i)
+	if (!bNumbersOnly)
 	{
-		unsigned wc = basic_latin[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-
-	desc.name = "latin-supplement";
-	desc.chars.clear();
-	for (int i = 0; latin_supplement[i]; ++i)
-	{
-		unsigned wc = latin_supplement[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-	
-	desc.name = "latin-extended-a";
-	desc.chars.clear();
-	for (int i = 0; latin_extended_a[i]; ++i)
-	{
-		unsigned wc = latin_extended_a[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-
-	desc.name = "latin-extended-b1";
-	desc.chars.clear();
-	for (int i = 0; latin_extended_b1[i]; ++i)
-	{
-		unsigned wc = latin_extended_b1[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-	
-	desc.name = "latin-extended-b2";
-	desc.chars.clear();
-	for (int i = 0; latin_extended_b2[i]; ++i)
-	{
-		unsigned wc = latin_extended_b2[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-
-	desc.name = "combining-diacritical";
-	desc.chars.clear();
-	for (int i = 0; combining_diacritical[i]; ++i)
-	{
-		unsigned wc = combining_diacritical[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-
-	desc.name = "greek";
-	desc.chars.clear();
-	for (int i = 0; greek[i]; ++i)
-	{
-		unsigned wc = greek[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-
-	desc.name = "cyrillic-a";
-	desc.chars.clear();
-	for (int i = 0; cyrillic_a[i]; ++i)
-	{
-		unsigned wc = cyrillic_a[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-
-	desc.name = "cyrillic-b";
-	desc.chars.clear();
-	for (int i = 0; cyrillic_b[i]; ++i)
-	{
-		unsigned wc = cyrillic_b[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-}
-else
-{
-	desc.name = "misc-1";
-	desc.chars.clear();
-	for (int i = 0; misc_1[i]; ++i)
-	{
-		unsigned wc = misc_1[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-
-	desc.name = "misc-2";
-	desc.chars.clear();
-	for (int i = 0; misc_2[i]; ++i)
-	{
-		unsigned wc = misc_2[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-
-	desc.name = "arrows";
-	desc.chars.clear();
-	for (int i = 0; arrows[i]; ++i)
-	{
-		unsigned wc = arrows[i];
-		desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back(desc);
-}
-#else // _TFG_CHINESE_ADDITION, _TFG_KOREAN_ADDITION
-	if( !bNumbersOnly )
-	{
-	/* // Don't generate duplicate
-		desc.name = "kanji 1";
+		desc.name = "basic-latin";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_1[i]; ++i )
+		for (int i = 0; basic_latin[i]; ++i)
 		{
-			unsigned wc = map_kanji_1[i];
+			unsigned wc = basic_latin[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-		desc.name = "kanji 2";
+		desc.name = "latin-supplement";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_2[i]; ++i )
+		for (int i = 0; latin_supplement[i]; ++i)
 		{
-			unsigned wc = map_kanji_2[i];
+			unsigned wc = latin_supplement[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-		desc.name = "kanji 3";
+		desc.name = "latin-extended-a";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_3[i]; ++i )
+		for (int i = 0; latin_extended_a[i]; ++i)
 		{
-			unsigned wc = map_kanji_3[i];
+			unsigned wc = latin_extended_a[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-		desc.name = "kanji 4";
+		desc.name = "latin-extended-b1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_4[i]; ++i )
+		for (int i = 0; latin_extended_b1[i]; ++i)
 		{
-			unsigned wc = map_kanji_4[i];
+			unsigned wc = latin_extended_b1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-		desc.name = "kanji 5";
+		desc.name = "latin-extended-b2";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_5[i]; ++i )
+		for (int i = 0; latin_extended_b2[i]; ++i)
 		{
-			unsigned wc = map_kanji_5[i];
+			unsigned wc = latin_extended_b2[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-		desc.name = "kanji 6";
+		desc.name = "combining-diacritical";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_6[i]; ++i )
+		for (int i = 0; combining_diacritical[i]; ++i)
 		{
-			unsigned wc = map_kanji_6[i];
+			unsigned wc = combining_diacritical[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-		desc.name = "kanji 7";
+		desc.name = "greek";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_7[i]; ++i )
+		for (int i = 0; greek[i]; ++i)
 		{
-			unsigned wc = map_kanji_7[i];
+			unsigned wc = greek[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-		desc.name = "kanji 8";
+		desc.name = "cyrillic-a";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_8[i]; ++i )
+		for (int i = 0; cyrillic_a[i]; ++i)
 		{
-			unsigned wc = map_kanji_8[i];
+			unsigned wc = cyrillic_a[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-		desc.name = "kanji 9";
+		desc.name = "cyrillic-b";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_9[i]; ++i )
+		for (int i = 0; cyrillic_b[i]; ++i)
 		{
-			unsigned wc = map_kanji_9[i];
+			unsigned wc = cyrillic_b[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
-	*/
-
-		// JIS X 0201/0208 and IBM/NEC Extension
-		desc.name = "ank";
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
+	}
+	else
+	{
+		desc.name = "misc-1";
 		desc.chars.clear();
-		for( int i = 0; map_ank[i]; ++i )
+		for (int i = 0; misc_1[i]; ++i)
 		{
-			unsigned wc = map_ank[i];
+			unsigned wc = misc_1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
+
+		desc.name = "misc-2";
+		desc.chars.clear();
+		for (int i = 0; misc_2[i]; ++i)
+		{
+			unsigned wc = misc_2[i];
+			desc.chars.push_back(wc);
+		}
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
+
+		desc.name = "arrows";
+		desc.chars.clear();
+		for (int i = 0; arrows[i]; ++i)
+		{
+			unsigned wc = arrows[i];
+			desc.chars.push_back(wc);
+		}
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
+	}
+#elif defined _TFG_JAPANESE_ADDITION
+	// JIS X 0201/0208 and IBM/NEC Extension
+	if (!bNumbersOnly)
+	{
+		desc.name = "basic-japanese";
+		desc.chars.clear();
+		for (int i = 0; map_basic_japanese[i]; ++i)
+		{
+			unsigned wc = map_basic_japanese[i];
+			desc.chars.push_back(wc);
+		}
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "symbol";
 		desc.chars.clear();
-		for( int i = 0; map_symbol[i]; ++i )
+		for (int i = 0; map_symbol[i]; ++i)
 		{
 			unsigned wc = map_symbol[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "symbol2";
 		desc.chars.clear();
-		for( int i = 0; map_symbol2[i]; ++i )
+		for (int i = 0; map_symbol2[i]; ++i)
 		{
 			unsigned wc = map_symbol2[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "symbol3";
 		desc.chars.clear();
-		for( int i = 0; map_symbol3[i]; ++i )
+		for (int i = 0; map_symbol3[i]; ++i)
 		{
 			unsigned wc = map_symbol3[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-regular 1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_regular_1[i]; ++i )
+		for (int i = 0; map_kanji_regular_1[i]; ++i)
 		{
 			unsigned wc = map_kanji_regular_1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-regular 2";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_regular_2[i]; ++i )
+		for (int i = 0; map_kanji_regular_2[i]; ++i)
 		{
 			unsigned wc = map_kanji_regular_2[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-regular 3";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_regular_3[i]; ++i )
+		for (int i = 0; map_kanji_regular_3[i]; ++i)
 		{
 			unsigned wc = map_kanji_regular_3[i];
 #ifndef _TFG_GENERATE_SIP
 			if (wc < 0x010000)
 #endif
-			desc.chars.push_back(wc);
+				desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis1[i]; ++i )
+		for (int i = 0; map_kanji_jis1[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis2 1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis2_1[i]; ++i )
+		for (int i = 0; map_kanji_jis2_1[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis2_1[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis2 2";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis2_2[i]; ++i )
+		for (int i = 0; map_kanji_jis2_2[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis2_2[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis2 3";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis2_3[i]; ++i )
+		for (int i = 0; map_kanji_jis2_3[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis2_3[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis2 4";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis2_4[i]; ++i )
+		for (int i = 0; map_kanji_jis2_4[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis2_4[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-ibm";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_ibm[i]; ++i )
+		for (int i = 0; map_kanji_ibm[i]; ++i)
 		{
 			unsigned wc = map_kanji_ibm[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "compatible";
 		desc.chars.clear();
-		for( int i = 0; map_compatible[i]; ++i )
+		for (int i = 0; map_compatible[i]; ++i)
 		{
 			unsigned wc = map_compatible[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 	}
 	else
 	{
+		desc.name = "ank";
+		desc.chars.clear();
+		for (int i = 0; map_ank[i]; ++i)
+		{
+			unsigned wc = map_ank[i];
+			desc.chars.push_back(wc);
+		}
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
+
 		// JIS X 0213 Extension and ARIB Extension
 		desc.name = "symbol4";
 		desc.chars.clear();
-		for( int i = 0; map_symbol4[i]; ++i )
+		for (int i = 0; map_symbol4[i]; ++i)
 		{
 			unsigned wc = map_symbol4[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "symbol5";
 		desc.chars.clear();
-		for( int i = 0; map_symbol5[i]; ++i )
+		for (int i = 0; map_symbol5[i]; ++i)
 		{
 			unsigned wc = map_symbol5[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis3 1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis3_1[i]; ++i )
+		for (int i = 0; map_kanji_jis3_1[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis3_1[i];
 #ifndef _TFG_GENERATE_SIP
 			if (wc < 0x010000)
 #endif
-			desc.chars.push_back(wc);
+				desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis3 2";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis3_2[i]; ++i )
+		for (int i = 0; map_kanji_jis3_2[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis3_2[i];
 #ifndef _TFG_GENERATE_SIP
 			if (wc < 0x010000)
 #endif
-			desc.chars.push_back(wc);
+				desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis4 1";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis4_1[i]; ++i )
+		for (int i = 0; map_kanji_jis4_1[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis4_1[i];
 #ifndef _TFG_GENERATE_SIP
 			if (wc < 0x010000)
 #endif
-			desc.chars.push_back(wc);
+				desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis4 2";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis4_2[i]; ++i )
+		for (int i = 0; map_kanji_jis4_2[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis4_2[i];
 #ifndef _TFG_GENERATE_SIP
 			if (wc < 0x010000)
 #endif
-			desc.chars.push_back(wc);
+				desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-jis4 3";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_jis4_3[i]; ++i )
+		for (int i = 0; map_kanji_jis4_3[i]; ++i)
 		{
 			unsigned wc = map_kanji_jis4_3[i];
 #ifndef _TFG_GENERATE_SIP
 			if (wc < 0x010000)
 #endif
-			desc.chars.push_back(wc);
+				desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
 		desc.name = "kanji-arib";
 		desc.chars.clear();
-		for( int i = 0; map_kanji_arib[i]; ++i )
+		for (int i = 0; map_kanji_arib[i]; ++i)
 		{
 			unsigned wc = map_kanji_arib[i];
 			desc.chars.push_back(wc);
 		}
-		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 	}
 #endif
 
-	/* Go: */
-	g_pTextureFont->FormatFontPages();
+		/* Go: */
+		g_pTextureFont->FormatFontPages();
 
-	m_SpinTop.SetPos( g_pTextureFont->m_iCharTop );
-	m_SpinBaseline.SetPos( g_pTextureFont->m_iCharBaseline );
+		m_SpinTop.SetPos(g_pTextureFont->m_iCharTop);
+		m_SpinBaseline.SetPos(g_pTextureFont->m_iCharBaseline);
 
-	m_ShownPage.ResetContent();
-	for( unsigned p = 0; p < g_pTextureFont->m_PagesToGenerate.size(); ++p )
-		m_ShownPage.AddString( g_pTextureFont->m_PagesToGenerate[p].name.GetString() );
-	int iRet = m_ShownPage.FindStringExact( -1, sOld );
-	if( iRet == CB_ERR )
-		iRet = 0;
-	m_ShownPage.SetCurSel( iRet );
+		m_ShownPage.ResetContent();
+		for (unsigned p = 0; p < g_pTextureFont->m_PagesToGenerate.size(); ++p)
+			m_ShownPage.AddString(g_pTextureFont->m_PagesToGenerate[p].name.GetString());
+		int iRet = m_ShownPage.FindStringExact(-1, sOld);
+		if (iRet == CB_ERR)
+			iRet = 0;
+		m_ShownPage.SetCurSel(iRet);
 }
 
 void CTextureFontGeneratorDlg::UpdateCloseUp()

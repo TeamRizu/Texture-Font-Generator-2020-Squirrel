@@ -4,6 +4,7 @@
 //
 
 // For details, see Texture Font GeneratorDlg.cpp
+#define _TFG_JAPANESE_ADDITION
 //#define _TFG_JAPANESE_SUPPLEMENTAL
 //#define _TFG_CHINESE_ADDITION
 //#define _TFG_KOREAN_ADDITION
