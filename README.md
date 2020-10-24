@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://projectmoon.dance/themes/moondance/assets/images/navbar-logo.png" width=250px>
+    <a href="https://projectmoon.dance"><img src="https://projectmoon.dance/themes/moondance/assets/images/navbar-logo.png" width=250px>
 </p>
 
 <p align=center>
