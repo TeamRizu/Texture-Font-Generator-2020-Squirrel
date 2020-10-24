@@ -1,9 +1,9 @@
 <p align="center">
-    <a href="https://projectmoon.dance"><img src="https://projectmoon.dance/themes/moondance/assets/images/navbar-logo.png" width=250px>
+    <a href="https://projectmoon.dance"><img src="https://projectmoon.dance/themes/moondance/assets/images/navbar-logo.png">
 </p>
 
 <p align=center>
-<b>Texture Font Generator 2020 </b><br>
+<a href="https://projectmoon.dance"><img src="https://projectmoon.dance/storage/app/media/tfg-full-logo.png">
 </p>
 
 <p align=center>
