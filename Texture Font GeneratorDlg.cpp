@@ -1843,6 +1843,12 @@ static const unsigned armenian[] = {
 	0
 };
 
+static const unsigned hebrew[] = {
+	0x05D0, 0x05D1, 0x05D2, 0x05D3, 0x05D4, 0x05D5, 0x05D6, 0x05D7, 0x05D8, 0x05D9, 0x05DA, 0x05DB, 0x05DC, 0x05DD, 0x05DE, 0x05DF,
+	0x05E0, 0x05E1, 0x05E2, 0x05E3, 0x05E4, 0x05E5, 0x05E6, 0x05E7, 0x05E8, 0x05E9, 0x05EA,
+	0
+};
+
 // Legacy Charmap Support
 const unsigned M_SKIP = 0xFEFF;
 
@@ -2460,7 +2466,6 @@ void CTextureFontGeneratorDlg::UpdateFont(bool bSavingDoubleRes)
 		}
 		g_pTextureFont->m_PagesToGenerate.push_back(desc);
 
-
 	}
 	else
 	{
@@ -2514,6 +2519,15 @@ void CTextureFontGeneratorDlg::UpdateFont(bool bSavingDoubleRes)
 		for (int i = 0; armenian[i]; ++i)
 		{
 			unsigned wc = armenian[i];
+			desc.chars.push_back(wc);
+		}
+		g_pTextureFont->m_PagesToGenerate.push_back(desc);
+
+		desc.name = "hebrew";
+		desc.chars.clear();
+		for (int i = 0; hebrew[i]; ++i)
+		{
+			unsigned wc = hebrew[i];
 			desc.chars.push_back(wc);
 		}
 		g_pTextureFont->m_PagesToGenerate.push_back(desc);
@@ -2776,7 +2790,7 @@ void CTextureFontGeneratorDlg::UpdateCloseUp()
 	if( hBitmap )
 		DeleteObject( hBitmap );
 
-	hSample = g_pTextureFont->m_Characters[0x003042];
+	hSample = g_pTextureFont->m_Characters[0x000058];
 
 	if( hSample == nullptr )
 		return;
