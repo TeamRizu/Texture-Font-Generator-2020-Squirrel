@@ -16,7 +16,7 @@ This is a modernisation of the Texture Font Generator for Stepmania 5.x, with in
 
 The glyphs now follow a more UTF-8 friendly method to generate.
 
-To Compile - You will need to mess around quite heavily with MFC to get this to compile in VS2019, but it does compile correctly.
+To Compile - You can select 'Release' on the type and then compile. It's mainly limited to the old win32 standard, but these are still compatible as of July 2021
 
 Adding new glyphs/missing glyphs. The fontpages need to be added back to the engine in 5.0/5.1 as they do not exist yet. This is a simple process of mirroring the codepages from Texture Font GeneratorDlg.cpp and adding it to the FontCharMaps.cpp within SM itself.
 
