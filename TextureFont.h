@@ -1,6 +1,8 @@
 #ifndef TEXTURE_FONT_H
 #define TEXTURE_FONT_H
 
+#include <afxstr.h>
+
 #include "usp10.h"
 #include <vector>
 #include <map>

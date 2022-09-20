@@ -10,9 +10,9 @@ class CTextureFontGeneratorDlg : public CDialog
 {
 	DECLARE_DYNAMIC(CTextureFontGeneratorDlg);
 
-public:
+
 	CTextureFontGeneratorDlg(CWnd* pParent = nullptr);	// standard constructor
-	virtual ~CTextureFontGeneratorDlg();
+	~CTextureFontGeneratorDlg() override;
 
 	enum { IDD = IDD_TEXTUREFONTGENERATOR_DIALOG };
 

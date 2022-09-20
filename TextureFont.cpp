@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "TextureFont.h"
+
+#include <afx.h>
+
 #include "Utils.h"
 
 #include <fstream>
