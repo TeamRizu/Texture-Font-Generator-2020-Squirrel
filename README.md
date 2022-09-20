@@ -12,9 +12,9 @@
     <a href="LICENSE"><img src="https://img.shields.io/github/license/teamrizu/Texture-Font-Generator-2020-Squirrel"/></a>
 </p>
 
-This is a modernisation of the Texture Font Generator for Stepmania 5.x, with incorrect glyphs and archiac codepages removed.
+This is a modernisation of the Texture Font Generator for Project OutFox, which supports Stepmania 3.x and 5.x, with incorrect glyphs and archiac codepages removed.
 
-The glyphs now follow a more UTF-8 friendly method to generate.
+The glyphs now follow a more unicode block/UTF-8 friendly method to generate.
 
 To Compile - You can select 'Release' on the type and then compile. It's mainly limited to the old win32 standard, but these are still compatible as of July 2021
 
